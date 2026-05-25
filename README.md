@@ -59,6 +59,20 @@ Then open:
 http://localhost:8000/TobaccoBarrier.html
 ```
 
+## Screenshots
+
+### Dashboard
+
+![Tobacco Barrier dashboard](screenshots/dashboard.png)
+
+### Log Day Modal
+
+![Tobacco Barrier log day modal](screenshots/log-day-modal.png)
+
+### Mobile View
+
+![Tobacco Barrier mobile view](screenshots/mobile-view.png)
+
 ## Data Storage
 
 The app does not use a backend server or database. User data is saved only in the current browser through `localStorage`.
