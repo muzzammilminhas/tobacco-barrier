@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tobacco Barrier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050f0a;
+      --card: rgba(10, 40, 20, 0.6);
+      --border: rgba(0, 255, 135, 0.12);
+      --green: #00ff87;
+      --green-soft: #52b788;
+      --red: #e07a5f;
+      --text: #e8f5e9;
+      --text-muted: #6b9e7a;
+      --panel: rgba(8, 30, 17, 0.76);
+      --panel-strong: rgba(12, 48, 24, 0.86);
+      --shadow-green: 0 0 24px rgba(0, 255, 135, 0.22);
+      --shadow-red: 0 0 22px rgba(224, 122, 95, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+    }
+
+    .app {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 40px;
+    }
+
+    .topline {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      margin: 0;
+      color: var(--text);
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(2rem, 4vw, 4rem);
+      font-weight: 700;
+      line-height: 0.95;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--text-muted);
+      font-size: 0.98rem;
+    }
+
+    .month-pill {
+      flex: 0 0 auto;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--green-soft);
+      background: rgba(10, 40, 20, 0.44);
+      white-space: nowrap;
+    }
+
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      background: rgba(10, 40, 20, 0.46);
+      backdrop-filter: blur(16px);
+    }
+
+    .stat-label {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      display: block;
+      margin-top: 6px;
+      color: var(--green);
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(2.4rem, 6vw, 5.2rem);
+      font-weight: 700;
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(0, 255, 135, 0.4);
+      overflow-wrap: anywhere;
+    }
+
+    .calendar-card {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+    }
+
+    .calendar-header {
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items: center;
+      gap: 12px;
+      padding: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .month-title {
+      margin: 0;
+      color: var(--text);
+      font-size: clamp(1.25rem, 3vw, 2rem);
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .nav-btn,
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--green);
+      background: rgba(0, 255, 135, 0.04);
+      transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .nav-btn:hover:not(:disabled),
+    .icon-btn:hover:not(:disabled) {
+      border-color: rgba(0, 255, 135, 0.36);
+      background: rgba(0, 255, 135, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .nav-btn:disabled {
+      color: rgba(107, 158, 122, 0.42);
+      background: rgba(107, 158, 122, 0.06);
+      border-color: rgba(107, 158, 122, 0.12);
+    }
+
+    .weekdays,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+
+    .weekdays {
+      padding: 14px 18px 8px;
+      gap: 8px;
+    }
+
+    .weekday {
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .calendar-grid {
+      gap: 8px;
+      padding: 0 18px 18px;
+    }
+
+    .day-cell,
+    .blank-cell {
+      position: relative;
+      min-height: 92px;
+      border-radius: 16px;
+    }
+
+    .blank-cell {
+      border: 1px solid rgba(107, 158, 122, 0.06);
+      background: rgba(107, 158, 122, 0.025);
+    }
+
+    .day-cell {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      align-items: start;
+      width: 100%;
+      border: 1px solid rgba(107, 158, 122, 0.14);
+      padding: 10px;
+      color: var(--text);
+      background: rgba(8, 30, 17, 0.58);
+      text-align: left;
+      transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .day-cell:hover:not(:disabled) {
+      border-color: rgba(0, 255, 135, 0.32);
+      background: rgba(10, 40, 20, 0.8);
+      transform: translateY(-1px);
+    }
+
+    .day-cell:disabled {
+      color: rgba(107, 158, 122, 0.42);
+      background: rgba(107, 158, 122, 0.055);
+      border-color: rgba(107, 158, 122, 0.08);
+    }
+
+    .day-cell.today {
+      border-color: rgba(0, 255, 135, 0.55);
+      box-shadow: var(--shadow-green);
+    }
+
+    .day-cell.logged-free {
+      border-color: rgba(0, 255, 135, 0.44);
+      background: rgba(0, 255, 135, 0.15);
+      box-shadow: inset 0 0 24px rgba(0, 255, 135, 0.08);
+    }
+
+    .day-cell.logged-smoked {
+      border-color: rgba(224, 122, 95, 0.5);
+      background: rgba(224, 122, 95, 0.15);
+      box-shadow: var(--shadow-red);
+    }
+
+    .date-number {
+      color: inherit;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .status-icon {
+      align-self: center;
+      justify-self: center;
+      color: var(--green);
+      font-size: 1.4rem;
+      text-shadow: 0 0 14px rgba(0, 255, 135, 0.42);
+    }
+
+    .logged-smoked .status-icon {
+      color: var(--red);
+      text-shadow: 0 0 14px rgba(224, 122, 95, 0.34);
+    }
+
+    .day-note {
+      min-height: 18px;
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      line-height: 1.2;
+    }
+
+    .not-logged .day-note::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: rgba(82, 183, 136, 0.62);
+      box-shadow: 0 0 8px rgba(82, 183, 136, 0.3);
+      vertical-align: 1px;
+    }
+
+    .logged-smoked .day-note {
+      color: #f0aa95;
+      font-weight: 700;
+    }
+
+    .quote-panel {
+      margin-top: 18px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: clamp(22px, 5vw, 42px);
+      background: rgba(10, 40, 20, 0.38);
+      text-align: center;
+      backdrop-filter: blur(14px);
+    }
+
+    .quote-text {
+      min-height: 74px;
+      margin: 0 auto 22px;
+      max-width: 820px;
+      color: var(--text);
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(1.5rem, 4vw, 2.7rem);
+      font-style: italic;
+      line-height: 1.18;
+    }
+
+    .quote-btn,
+    .primary-btn,
+    .save-btn {
+      border: 1px solid var(--green);
+      border-radius: 10px;
+      color: var(--green);
+      background: transparent;
+      transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .quote-btn {
+      min-height: 44px;
+      padding: 0 20px;
+      font-weight: 700;
+    }
+
+    .quote-btn:hover,
+    .primary-btn:hover,
+    .save-btn:hover:not(:disabled) {
+      color: var(--bg);
+      background: var(--green);
+      box-shadow: 0 0 20px rgba(0, 255, 135, 0.26);
+      transform: translateY(-1px);
+    }
+
+    .modal-overlay,
+    .setup-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(5, 15, 10, 0.76);
+      backdrop-filter: blur(8px);
+      animation: fadeIn 180ms ease both;
+    }
+
+    .modal-overlay[hidden],
+    .setup-overlay[hidden] {
+      display: none;
+    }
+
+    .modal,
+    .setup-card {
+      width: min(480px, 100%);
+      border: 1px solid rgba(0, 255, 135, 0.18);
+      border-radius: 20px;
+      padding: 24px;
+      background: rgba(10, 40, 20, 0.88);
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.38), 0 0 32px rgba(0, 255, 135, 0.08);
+      animation: liftIn 220ms ease both;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .modal-title,
+    .setup-title {
+      margin: 0;
+      color: var(--text);
+      font-size: 1.5rem;
+      line-height: 1.15;
+    }
+
+    .setup-title {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(1.8rem, 7vw, 2.8rem);
+      text-align: center;
+    }
+
+    .setup-card {
+      text-align: center;
+    }
+
+    .setup-copy {
+      margin: 10px 0 20px;
+      color: var(--text-muted);
+    }
+
+    .close-btn {
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(107, 158, 122, 0.22);
+      border-radius: 12px;
+      color: var(--text-muted);
+      background: rgba(107, 158, 122, 0.08);
+    }
+
+    .close-btn:hover {
+      border-color: rgba(0, 255, 135, 0.24);
+      color: var(--green);
+    }
+
+    .toggle-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .toggle-btn {
+      min-height: 86px;
+      border: 1px solid rgba(107, 158, 122, 0.2);
+      border-radius: 16px;
+      color: var(--text);
+      background: rgba(8, 30, 17, 0.62);
+      font-weight: 700;
+      transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .toggle-btn:hover {
+      border-color: rgba(0, 255, 135, 0.32);
+      transform: translateY(-1px);
+    }
+
+    .toggle-btn.active[data-choice="free"] {
+      border-color: rgba(0, 255, 135, 0.64);
+      background: rgba(0, 255, 135, 0.15);
+      box-shadow: var(--shadow-green);
+    }
+
+    .toggle-btn.active[data-choice="smoked"] {
+      border-color: rgba(224, 122, 95, 0.64);
+      background: rgba(224, 122, 95, 0.15);
+      box-shadow: var(--shadow-red);
+    }
+
+    .field {
+      margin: 14px 0 18px;
+      text-align: left;
+    }
+
+    .field[hidden] {
+      display: none;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    input[type="date"],
+    input[type="number"] {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid rgba(0, 255, 135, 0.18);
+      border-radius: 12px;
+      padding: 0 12px;
+      color: var(--text);
+      background: rgba(5, 15, 10, 0.72);
+      color-scheme: dark;
+      outline: none;
+    }
+
+    input[type="date"]:focus,
+    input[type="number"]:focus {
+      border-color: rgba(0, 255, 135, 0.52);
+      box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.08);
+    }
+
+    .modal-actions,
+    .setup-actions {
+      display: flex;
+      justify-content: end;
+      gap: 10px;
+    }
+
+    .setup-actions {
+      justify-content: center;
+    }
+
+    .primary-btn,
+    .save-btn {
+      min-height: 46px;
+      padding: 0 18px;
+      font-weight: 700;
+    }
+
+    .save-btn:disabled {
+      border-color: rgba(107, 158, 122, 0.18);
+      color: rgba(107, 158, 122, 0.5);
+      background: rgba(107, 158, 122, 0.06);
+    }
+
+    .hint,
+    .error {
+      min-height: 20px;
+      margin: 8px 0 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .error {
+      color: #f0aa95;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes liftIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        width: min(100% - 20px, 1120px);
+        padding-top: 18px;
+      }
+
+      .topline {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .month-pill {
+        white-space: normal;
+      }
+
+      .stats-bar {
+        gap: 10px;
+      }
+
+      .stat {
+        padding: 16px 12px;
+      }
+
+      .stat-label {
+        font-size: 0.72rem;
+      }
+
+      .calendar-header {
+        grid-template-columns: 40px 1fr 40px;
+        padding: 14px;
+      }
+
+      .nav-btn,
+      .icon-btn {
+        width: 40px;
+        height: 40px;
+      }
+
+      .weekdays {
+        gap: 4px;
+        padding: 12px 10px 6px;
+      }
+
+      .weekday {
+        font-size: 0.67rem;
+      }
+
+      .calendar-grid {
+        gap: 5px;
+        padding: 0 10px 12px;
+      }
+
+      .day-cell,
+      .blank-cell {
+        min-height: 68px;
+        border-radius: 12px;
+      }
+
+      .day-cell {
+        padding: 7px;
+      }
+
+      .status-icon {
+        font-size: 1rem;
+      }
+
+      .day-note {
+        font-size: 0.62rem;
+      }
+
+      .toggle-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .stat-value {
+        font-size: 2.15rem;
+      }
+
+      .day-note {
+        color: transparent;
+      }
+
+      .not-logged .day-note::before {
+        margin-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" aria-live="polite">
+    <header class="topline">
+      <div>
+        <h1 class="brand">Tobacco Barrier</h1>
+        <p class="subtitle" id="quitSummary">Your quit date is waiting.</p>
+      </div>
+      <div class="month-pill" id="todayPill"></div>
+    </header>
+
+    <section class="stats-bar" aria-label="Smoking stats">
+      <article class="stat">
+        <span class="stat-label">Total cigarettes smoked</span>
+        <span class="stat-value" id="totalCigarettes">0</span>
+      </article>
+      <article class="stat">
+        <span class="stat-label">Total Rs. wasted</span>
+        <span class="stat-value" id="totalWasted">0</span>
+      </article>
+    </section>
+
+    <section class="calendar-card" aria-label="Calendar tracker">
+      <div class="calendar-header">
+        <button class="nav-btn" id="prevMonth" type="button" aria-label="Previous month">‹</button>
+        <h2 class="month-title" id="monthTitle">Month</h2>
+        <button class="nav-btn" id="nextMonth" type="button" aria-label="Next month">›</button>
+      </div>
+      <div class="weekdays" aria-hidden="true">
+        <div class="weekday">Mon</div>
+        <div class="weekday">Tue</div>
+        <div class="weekday">Wed</div>
+        <div class="weekday">Thu</div>
+        <div class="weekday">Fri</div>
+        <div class="weekday">Sat</div>
+        <div class="weekday">Sun</div>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </section>
+
+    <section class="quote-panel" aria-label="Motivational quote">
+      <p class="quote-text" id="quoteText"></p>
+      <button class="quote-btn" id="newQuote" type="button">New Quote 🌿</button>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="logOverlay" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="logTitle">
+      <div class="modal-head">
+        <h2 class="modal-title" id="logTitle">Log day</h2>
+        <button class="close-btn" id="closeModal" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="toggle-row" role="group" aria-label="Smoking status">
+        <button class="toggle-btn" id="freeChoice" data-choice="free" type="button">✅ Smoke Free</button>
+        <button class="toggle-btn" id="smokedChoice" data-choice="smoked" type="button">❌ I Smoked</button>
+      </div>
+      <div class="field" id="countField" hidden>
+        <label for="cigaretteCount">How many cigarettes?</label>
+        <input id="cigaretteCount" type="number" min="1" step="1" inputmode="numeric">
+      </div>
+      <p class="error" id="modalError"></p>
+      <div class="modal-actions">
+        <button class="save-btn" id="saveLog" type="button" disabled>Save</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="setup-overlay" id="setupOverlay" hidden>
+    <section class="setup-card" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+      <h2 class="setup-title" id="setupTitle">Welcome. When did you decide to quit?</h2>
+      <p class="setup-copy">Set this once. Your calendar will begin from that month.</p>
+      <form id="setupForm">
+        <div class="field">
+          <label for="quitDateInput">Quit decision date</label>
+          <input id="quitDateInput" type="date" required>
+          <p class="hint" id="setupHint"></p>
+          <p class="error" id="setupError"></p>
+        </div>
+        <div class="setup-actions">
+          <button class="primary-btn" type="submit">Let's Begin 🌿</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_LOGS = "tb_logs";
+    const STORAGE_QUIT_DATE = "tb_quit_date";
+    const CIGARETTE_COST = 25;
+    const QUOTES = [
+      "Every cigarette you don't smoke is a victory.",
+      "Your lungs are already thanking you.",
+      "Freedom is reclaimed breath by breath.",
+      "The hardest part was deciding. You already did that.",
+      "One day at a time. One breath at a time.",
+      "You are not missing something. You are gaining everything.",
+      "Cravings are proof your body is healing, not suffering.",
+      "The person you are becoming is worth more than a cigarette.",
+      "You chose yourself today. That is everything.",
+      "Every craving you survive makes the next one weaker.",
+      "You are not quitting. You are arriving.",
+      "The urge will pass whether you smoke or not. Choose to wait.",
+      "Your body has been waiting for this decision your whole life.",
+      "Small victories stacked daily become a new life.",
+      "You do not need a cigarette to handle stress. You need a breath.",
+      "Nobody ever regretted a day they did not smoke.",
+      "You are stronger than a dried leaf wrapped in paper.",
+      "Log it. Face it. Own it. That is what strength looks like.",
+      "Three years of smoke. But look - you are already here.",
+      "Not smoking is not an absence. It is the presence of clarity.",
+      "Every deep breath is an act of rebellion against the habit.",
+      "A year from now you will not remember the cravings.",
+      "Progress is not always visible. But it is always happening.",
+      "Today's zero is tomorrow's foundation.",
+      "The money you saved is real. The lungs you saved are realer.",
+      "You opened this app instead of lighting up. That is the whole game.",
+      "Be patient with yourself. You are undoing years of chemistry.",
+      "A craving is a wave. It builds, it peaks, it falls. Ride it.",
+      "Your future self is breathing clearly right now. Keep going.",
+      "Strength is not the absence of struggle. It is continuing despite it.",
+      "The cigarette promised relief. It lied.",
+      "You picked up this habit in the dark. You are putting it down in the light.",
+      "The streak is not the goal. The breath is the goal.",
+      "One breath at a time. That is all. One breath at a time.",
+      "You gave three years to smoking. Give today to yourself.",
+      "The forest grew one ring at a time. So do you.",
+      "Honesty in logging is honesty with yourself. That is rare.",
+      "There is no version of you that regrets quitting.",
+      "Today is the worst it will ever be. Tomorrow is lighter.",
+      "You are rewriting a story that a cigarette company wrote. Take the pen back.",
+    ];
+
+    const elements = {
+      calendarGrid: document.getElementById("calendarGrid"),
+      monthTitle: document.getElementById("monthTitle"),
+      prevMonth: document.getElementById("prevMonth"),
+      nextMonth: document.getElementById("nextMonth"),
+      totalCigarettes: document.getElementById("totalCigarettes"),
+      totalWasted: document.getElementById("totalWasted"),
+      quitSummary: document.getElementById("quitSummary"),
+      todayPill: document.getElementById("todayPill"),
+      quoteText: document.getElementById("quoteText"),
+      newQuote: document.getElementById("newQuote"),
+      logOverlay: document.getElementById("logOverlay"),
+      logTitle: document.getElementById("logTitle"),
+      closeModal: document.getElementById("closeModal"),
+      freeChoice: document.getElementById("freeChoice"),
+      smokedChoice: document.getElementById("smokedChoice"),
+      countField: document.getElementById("countField"),
+      cigaretteCount: document.getElementById("cigaretteCount"),
+      modalError: document.getElementById("modalError"),
+      saveLog: document.getElementById("saveLog"),
+      setupOverlay: document.getElementById("setupOverlay"),
+      setupForm: document.getElementById("setupForm"),
+      quitDateInput: document.getElementById("quitDateInput"),
+      setupHint: document.getElementById("setupHint"),
+      setupError: document.getElementById("setupError"),
+    };
+
+    const today = startOfDay(new Date());
+    let logs = loadLogs();
+    let quitDate = loadQuitDate();
+    let visibleMonth = monthStart(today);
+    let selectedDateKey = "";
+    let selectedChoice = "";
+    let quoteBag = [];
+
+    function pad(number) {
+      return String(number).padStart(2, "0");
+    }
+
+    function toKey(date) {
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    }
+
+    function fromKey(key) {
+      const parts = key.split("-").map(Number);
+      if (parts.length !== 3 || parts.some(Number.isNaN)) {
+        return null;
+      }
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+
+    function startOfDay(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function monthStart(date) {
+      return new Date(date.getFullYear(), date.getMonth(), 1);
+    }
+
+    function addMonths(date, offset) {
+      return new Date(date.getFullYear(), date.getMonth() + offset, 1);
+    }
+
+    function isSameDay(a, b) {
+      return toKey(a) === toKey(b);
+    }
+
+    function isSameMonth(a, b) {
+      return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
+    }
+
+    function formatDate(date, options) {
+      return date.toLocaleDateString(undefined, options);
+    }
+
+    function loadLogs() {
+      try {
+        const raw = localStorage.getItem(STORAGE_LOGS);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function saveLogs() {
+      localStorage.setItem(STORAGE_LOGS, JSON.stringify(logs));
+    }
+
+    function loadQuitDate() {
+      const stored = localStorage.getItem(STORAGE_QUIT_DATE);
+      const parsed = stored ? fromKey(stored) : null;
+      if (!parsed) {
+        return null;
+      }
+      return startOfDay(parsed);
+    }
+
+    function setQuitDate(date) {
+      quitDate = startOfDay(date);
+      localStorage.setItem(STORAGE_QUIT_DATE, toKey(quitDate));
+    }
+
+    function minAllowedQuitDate() {
+      return new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
+    }
+
+    function initSetupBounds() {
+      const minDate = minAllowedQuitDate();
+      elements.quitDateInput.min = toKey(minDate);
+      elements.quitDateInput.max = toKey(today);
+      elements.quitDateInput.value = toKey(today);
+      elements.setupHint.textContent = `Choose a date from ${formatDate(minDate, { month: "short", day: "numeric", year: "numeric" })} to today.`;
+    }
+
+    function ensureValidQuitDate() {
+      if (!quitDate) {
+        return false;
+      }
+      if (quitDate > today || quitDate < minAllowedQuitDate()) {
+        localStorage.removeItem(STORAGE_QUIT_DATE);
+        quitDate = null;
+        return false;
+      }
+      return true;
+    }
+
+    function render() {
+      renderStats();
+      renderHeader();
+      renderCalendar();
+    }
+
+    function renderHeader() {
+      elements.todayPill.textContent = `Today: ${formatDate(today, { weekday: "long", month: "short", day: "numeric" })}`;
+      if (quitDate) {
+        elements.quitSummary.textContent = `Quit decision: ${formatDate(quitDate, { month: "long", day: "numeric", year: "numeric" })}`;
+      }
+    }
+
+    function renderStats() {
+      const total = Object.entries(logs).reduce((sum, [key, entry]) => {
+        const date = fromKey(key);
+        if (!date || (quitDate && date < quitDate) || date > today) {
+          return sum;
+        }
+        const count = Number(entry && entry.count) || 0;
+        return sum + Math.max(0, count);
+      }, 0);
+
+      elements.totalCigarettes.textContent = total.toLocaleString();
+      elements.totalWasted.textContent = (total * CIGARETTE_COST).toLocaleString();
+    }
+
+    function renderCalendar() {
+      if (!quitDate) {
+        elements.calendarGrid.innerHTML = "";
+        return;
+      }
+
+      const quitMonth = monthStart(quitDate);
+      const currentMonth = monthStart(today);
+      if (visibleMonth < quitMonth) {
+        visibleMonth = quitMonth;
+      }
+      if (visibleMonth > currentMonth) {
+        visibleMonth = currentMonth;
+      }
+
+      elements.monthTitle.textContent = formatDate(visibleMonth, { month: "long", year: "numeric" });
+      elements.prevMonth.disabled = isSameMonth(visibleMonth, quitMonth);
+      elements.nextMonth.disabled = isSameMonth(visibleMonth, currentMonth);
+
+      const year = visibleMonth.getFullYear();
+      const month = visibleMonth.getMonth();
+      const firstDayOffset = (new Date(year, month, 1).getDay() + 6) % 7;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const cells = [];
+
+      for (let i = 0; i < firstDayOffset; i += 1) {
+        cells.push(createBlankCell());
+      }
+
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        cells.push(createDayCell(new Date(year, month, day)));
+      }
+
+      while (cells.length % 7 !== 0) {
+        cells.push(createBlankCell());
+      }
+
+      elements.calendarGrid.replaceChildren(...cells);
+    }
+
+    function createBlankCell() {
+      const cell = document.createElement("div");
+      cell.className = "blank-cell";
+      cell.setAttribute("aria-hidden", "true");
+      return cell;
+    }
+
+    function createDayCell(date) {
+      const key = toKey(date);
+      const entry = logs[key];
+      const beforeQuit = date < quitDate;
+      const future = date > today;
+      const cell = document.createElement("button");
+      const number = document.createElement("span");
+      const icon = document.createElement("span");
+      const note = document.createElement("span");
+
+      cell.type = "button";
+      cell.className = "day-cell";
+      number.className = "date-number";
+      icon.className = "status-icon";
+      note.className = "day-note";
+      number.textContent = date.getDate();
+
+      if (isSameDay(date, today)) {
+        cell.classList.add("today");
+      }
+
+      if (beforeQuit) {
+        cell.disabled = true;
+        note.textContent = "Before quit";
+      } else if (future) {
+        cell.disabled = true;
+        note.textContent = "Future";
+      } else if (entry && entry.smoked) {
+        cell.classList.add("logged-smoked");
+        icon.textContent = "❌";
+        note.textContent = `${Number(entry.count) || 0} cigarette${Number(entry.count) === 1 ? "" : "s"}`;
+      } else if (entry && entry.smoked === false) {
+        cell.classList.add("logged-free");
+        icon.textContent = "✅";
+        note.textContent = "Smoke free";
+      } else {
+        cell.classList.add("not-logged");
+        note.textContent = "Not logged";
+      }
+
+      cell.setAttribute("aria-label", calendarLabel(date, entry, beforeQuit, future));
+      if (!beforeQuit && !future) {
+        cell.addEventListener("click", () => openModal(key));
+      }
+
+      cell.append(number, icon, note);
+      return cell;
+    }
+
+    function calendarLabel(date, entry, beforeQuit, future) {
+      const formatted = formatDate(date, { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+      if (beforeQuit) {
+        return `${formatted}, before quit date`;
+      }
+      if (future) {
+        return `${formatted}, future day`;
+      }
+      if (entry && entry.smoked) {
+        return `${formatted}, smoked ${Number(entry.count) || 0} cigarettes`;
+      }
+      if (entry && entry.smoked === false) {
+        return `${formatted}, smoke free`;
+      }
+      return `${formatted}, not logged`;
+    }
+
+    function openModal(key) {
+      selectedDateKey = key;
+      const date = fromKey(key);
+      const entry = logs[key];
+      selectedChoice = "";
+
+      elements.logTitle.textContent = formatDate(date, { weekday: "long", month: "long", day: "numeric" });
+      elements.modalError.textContent = "";
+      elements.cigaretteCount.value = "";
+
+      if (entry && entry.smoked) {
+        selectedChoice = "smoked";
+        elements.cigaretteCount.value = Math.max(1, Number(entry.count) || 1);
+      } else if (entry && entry.smoked === false) {
+        selectedChoice = "free";
+      }
+
+      updateModalChoice();
+      elements.logOverlay.hidden = false;
+
+      const focusTarget = selectedChoice === "smoked" ? elements.cigaretteCount : elements.freeChoice;
+      window.setTimeout(() => focusTarget.focus(), 0);
+    }
+
+    function closeModal() {
+      elements.logOverlay.hidden = true;
+      selectedDateKey = "";
+      selectedChoice = "";
+      elements.modalError.textContent = "";
+    }
+
+    function setChoice(choice) {
+      selectedChoice = choice;
+      if (choice === "smoked" && !elements.cigaretteCount.value) {
+        elements.cigaretteCount.value = "1";
+      }
+      updateModalChoice();
+    }
+
+    function updateModalChoice() {
+      elements.freeChoice.classList.toggle("active", selectedChoice === "free");
+      elements.smokedChoice.classList.toggle("active", selectedChoice === "smoked");
+      elements.countField.hidden = selectedChoice !== "smoked";
+      elements.saveLog.disabled = selectedChoice === "";
+    }
+
+    function saveSelectedLog() {
+      if (!selectedDateKey || !selectedChoice) {
+        elements.modalError.textContent = "Choose one option before saving.";
+        return;
+      }
+
+      if (selectedChoice === "smoked") {
+        const count = Number(elements.cigaretteCount.value);
+        if (!Number.isInteger(count) || count < 1) {
+          elements.modalError.textContent = "Enter at least 1 cigarette.";
+          elements.cigaretteCount.focus();
+          return;
+        }
+        logs[selectedDateKey] = { smoked: true, count };
+      } else {
+        logs[selectedDateKey] = { smoked: false, count: 0 };
+      }
+
+      saveLogs();
+      closeModal();
+      render();
+    }
+
+    function shuffle(array) {
+      const copy = array.slice();
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function showNewQuote() {
+      if (quoteBag.length === 0) {
+        quoteBag = shuffle(QUOTES);
+      }
+      elements.quoteText.textContent = quoteBag.pop();
+    }
+
+    elements.prevMonth.addEventListener("click", () => {
+      visibleMonth = addMonths(visibleMonth, -1);
+      renderCalendar();
+    });
+
+    elements.nextMonth.addEventListener("click", () => {
+      visibleMonth = addMonths(visibleMonth, 1);
+      renderCalendar();
+    });
+
+    elements.newQuote.addEventListener("click", showNewQuote);
+    elements.closeModal.addEventListener("click", closeModal);
+    elements.freeChoice.addEventListener("click", () => setChoice("free"));
+    elements.smokedChoice.addEventListener("click", () => setChoice("smoked"));
+    elements.saveLog.addEventListener("click", saveSelectedLog);
+
+    elements.logOverlay.addEventListener("click", (event) => {
+      if (event.target === elements.logOverlay) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !elements.logOverlay.hidden) {
+        closeModal();
+      }
+    });
+
+    elements.setupForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      elements.setupError.textContent = "";
+
+      const selected = fromKey(elements.quitDateInput.value);
+      const minDate = minAllowedQuitDate();
+      if (!selected) {
+        elements.setupError.textContent = "Choose your quit decision date.";
+        return;
+      }
+      if (selected > today) {
+        elements.setupError.textContent = "The quit date cannot be in the future.";
+        return;
+      }
+      if (selected < minDate) {
+        elements.setupError.textContent = "Choose a date within the last 5 years.";
+        return;
+      }
+
+      setQuitDate(selected);
+      visibleMonth = monthStart(quitDate);
+      elements.setupOverlay.hidden = true;
+      render();
+    });
+
+    initSetupBounds();
+    showNewQuote();
+
+    if (ensureValidQuitDate()) {
+      visibleMonth = monthStart(today);
+      elements.setupOverlay.hidden = true;
+      render();
+    } else {
+      elements.setupOverlay.hidden = false;
+      renderHeader();
+      renderStats();
+      window.setTimeout(() => elements.quitDateInput.focus(), 0);
+    }
+  </script>
+</body>
+</html>
