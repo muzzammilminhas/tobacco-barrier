@@ -2,6 +2,8 @@
 
 Tobacco Barrier is a standalone web app that helps users track their quit-smoking journey with a daily calendar, cigarette count logging, cost tracking, and motivational quotes.
 
+**[Live Demo →](https://muzzammilminhas.github.io/tobacco-barrier/)**
+
 ## Features
 
 - Set a quit decision date before starting the tracker.
